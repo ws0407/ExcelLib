@@ -37,8 +37,9 @@ list(range(1, 11, 3))	# [1, 4, 7, 10]
 
 #### break 和 continue 语句
 
-* `break`：调出整个 `for`或 `while`循环
+* `break`：跳出整个 `for`或 `while`循环
 * `continue`：跳过当前循环块中的剩余语句，继续下一轮循环
+* break和continue终止的都是当前的循环
 
 ```python
 price, quantity = 0, 0		# 初始化
@@ -66,9 +67,15 @@ total_sales = price * quantity * discount_rate
 print("销量为：", total_sales)
 ```
 
+#### try 和 except 语句
+
+* 表示异常处理
+* try: 你要测试的代码，可能报错的代码
+* except: 发生异常会执行的代码，如果try里没有异常，这里不会执行。如果这里还有异常，报错
+
 #### pass语句
 
-表示啥也不做，占位使用
+非常不常用，表示啥也不做，占位使用
 
 ```python
 for i in range(10):
@@ -85,6 +92,12 @@ for i in range(10):
 ```python
 price, quantity = 52.5, 12
 discount_rate = 0.8 if price > 50 and quantity >= 10 else 1
+
+# 等价于下面的语句
+if price > 50 and quantity >= 10:
+   discount_rate = 0.8
+else:
+   discount_rate = 1
 ```
 
 `for` 语句
@@ -102,11 +115,15 @@ L2 = [item * 2 for item in L1 if item > 5]	# [12, 14, 16, 18]
 L3 = [item if item % 2 == 0 else item + 1 for item in L1 if item < 5]	# [0, 2, 2, 4, 4]
 
 words = {'你好': 'hello', '中国': 'China', '英语': 'English'}
-# 把原来没有大写的单词全部变成大写
+# 把原来没有大写的单词全部变成大写，有大写字母的不要
 lower_words = {k: v.upper() for k, v in words.items() if v == v.lower()}	#lower_words: {'你好': 'HELLO'}
 
 # 嵌套
 # 矩阵中所有元素乘3
 matrix = [[1,2,3,4], [5,6,7,8], [9,10,11,12], [13,14,15,16]]
 array = [[item * 3 for item in array] for array in matrix]	# [[3, 6, 9, 12], ..., [39, 42, 45, 48]]
+```
+
+```
+enumerate
 ```

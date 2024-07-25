@@ -22,8 +22,11 @@ class student(people):
     # 覆写父类的方法
     def speak(self):
         print("%s说: 我%d岁了，我在读%d年级" %(self.name, self.age, self.grade))
- 
-p = people('Tom',12,65)
+
+# 实例化
+p = people('Tom', 12, 65)
+print("name:", p.name)
+# print("weight:", p.__weight)
 p.speak()
  
 s = student('Jerry',10,60,3)

@@ -2,7 +2,7 @@
 
 函数是组织好的，可重复使用的，用来实现单一，或相关联功能的代码段。
 
-函数能提高应用的模块性，和代码的重复利用率。py内部有很多内置函数，例如`print()`，用户也可根据代码需要，自定义函数。
+函数能提高应用的模块性，和代码的重复利用率。py内部有很多内置函数，例如 `print()`，用户也可根据代码需要，自定义函数。
 
 #### 函数定义
 
@@ -14,12 +14,14 @@ def 函数名(参数1, 参数2, ...):
 
 ```python
 # 有参数，无返回值
+# 函数里的参数叫：形参
 def print_stu_info(stu):
     print('Name:', stu['name'], 
           '\nClass:', stu['class'],
           '\nGender:', stu['gender'])
 
 stu1 = {'name': 'ws', 'class': '2', 'gender': 'male', 'age': 23}
+# 实际调用的是：实参
 print_stu_info(stu1)    # 调用函数
 ```
 
@@ -57,6 +59,14 @@ def printinfo( arg1, **vardict ):
    print (vardict)
 
 printinfo(1, a=2,b=3)
+
+def sum(a=0, *args):
+   sums = a
+   for value in args:
+       sums += value
+   return sums
+
+print(sum(1, 2, 3))
 
 # 加了两个星号 ** 的参数会以字典的形式导入，单个 * 是元组形式
 # 如果没有传入多余的参数，则为空字典或空元组

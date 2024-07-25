@@ -1,6 +1,6 @@
 import numpy as np
-import pandas as pd
-
+import pandas as pd     # 简写
+import openpyxl
 
 # 定义一个表格
 df = pd.DataFrame({
@@ -12,17 +12,17 @@ df = pd.DataFrame({
         'E': np.random.randn(12),
         'F': np.random.randint(low=20, high=30, size=12, dtype='int'),
     })
-print(df)
+# print(df)
 
-# 数据筛选：筛选A中为one的数据
-print(df[df['A'] == 'one'])
-# 数据筛选：筛选F中大于25的数据
-print(df[df['F'] > 25])
-# 数据筛选：筛选B中为A或C的数据
-print(df[(df['B'].isin(['A', 'C']))])
+# # 数据筛选：筛选A中为one的数据
+# print(df[df['A'] == 'one'])
+# # 数据筛选：筛选F中大于25的数据
+# print(df[df['F'] > 25])
+# # 数据筛选：筛选B中为A或C的数据
+# print(df[(df['B'].isin(['A', 'C']))])
 
 # 删除F列
-df.drop('F', axis=1, inplace=True)  # 或者df = df.drop(columns=['F'])
+df.drop('F', axis=1, inplace=True)  # 或者df = df.drop(columns=['E', 'F'])
 print(df)
 
 # 数据透视表

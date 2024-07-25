@@ -48,7 +48,9 @@ print("销量为：", total_sales)
 | `is`     | 是，同一个对象（同一块内存）       |
 | `is not` | 不是，不是同一个对象（同一块内存） |
 
-类似于`C++`的`switch...case...`，python有`match...case...`
+类似于 `C++`的 `switch...case...`，python有 `match...case...`
+
+一般不会用，Python对match case的支持是从3.10版本开始的，目前主流的python还停留在3.7以下
 
 ```python
 def http_error(status):

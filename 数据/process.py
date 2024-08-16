@@ -1,11 +1,137 @@
+
+from matplotlib.ticker import AutoMinorLocator
+from matplotlib.pyplot import MultipleLocator
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import time
+import openpyxl
 
-filepath = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
-filename = '2023.8-2024.6合并数据_split.csv'
+path = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
+
+def get_data():
+    res = {}
+    wb = openpyxl.load_workbook(path + 'results.xlsx')
+    sheet1 = wb.active
+    sample = {}
+    sample['人数'] = [int(sheet1.cell(4, col).value) for col in range(3, 14)]
+    sample['交易笔数'] = [int(sheet1.cell(5, col).value) for col in range(3, 14)]
+    res['总'] = sample
+    return res
+
+
+
+
+exit()
+
+from matplotlib.ticker import AutoMinorLocator
+from matplotlib.pyplot import MultipleLocator
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+import openpyxl
+
+path = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
+
+
+def get_data():
+    res = {}
+    wb = openpyxl.load_workbook(path + 'results.xlsx')
+    sheet1 = wb.active
+
+    for i in range(6):
+        sample = {}
+        sample['人数'] = [int(sheet1.cell(i * 2 + 6, col).value) for col in range(3, 14)]
+        sample['交易笔数'] = [int(sheet1.cell(i * 2 + 7, col).value) for col in range(3, 14)]
+        res[sheet1.cell(i * 2 + 6, 2).value] = sample
+    return res
+
+
+def plot_6_subfigure():
+    res = get_data()
+    # print(data)
+
+    labels = list(res.keys())
+    keys = list(res[labels[0]].keys())
+    keys_plot = keys
+    colors = ['#DE582B', '#1868B2']
+    markers = ['o', 'x']
+    linestyles = ['-', '-.']
+
+    x = ['2023-08', '2023-09', '2023-10', '2023-11', '2023-12', '2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06']
+
+    plt.rcParams['axes.linewidth'] = 1
+    # 设置图例标题大小
+    plt.rcParams['legend.title_fontsize'] = 10
+    plt.rcParams["font.family"] = ["Times New Roman", "SimSun"]  # 使用支持的黑体中文字体
+    # 全局字体
+    plt.rcParams['font.size'] = 13
+    # 标题的字体大小
+    plt.rcParams['axes.titlesize'] = 13
+    plt.rcParams["axes.unicode_minus"] = False  # 用来正常显示负数  "-"
+    # 刻度字体大小
+    plt.rcParams['xtick.labelsize'] = 10
+    plt.rcParams['ytick.labelsize'] = 10
+    # plt.rcParams['font.sans-serif'] = ['Fangsong']  # 用来正常显示中文标签
+
+    # yticks(np.linspace(0.2, 1.0, 5, endpoint=True))
+
+    fig, axes = plt.subplots(3, 3, figsize=(36, 36), dpi=120)
+    for i in range(3):
+        plt.delaxes(axes[2, i])
+    # plt.delaxes(axes[2, 1])
+
+    plt.subplots_adjust(wspace=None, hspace=0.6)
+
+    for i, label in zip(range(6), labels):
+        ax = axes[int(i / 3), int(i % 3)]
+        for p, c, m, ls, k_p in zip(keys, colors, markers, linestyles, keys_plot):
+            ax.plot(x[:len(res[label][p])], res[label][p][:], color=c, label=k_p, marker=m, linestyle=ls)
+        ax.plot([0], [0], color='w')
+        # 修改次刻度
+        # yminorLocator = MultipleLocator(1)  # 将此y轴次刻度标签设置为0.1的倍数
+        xminorLocator = MultipleLocator(1)
+        xmajorLocator = MultipleLocator(2)
+        # ymajorLocator = MultipleLocator(100)
+        # ax.yaxis.set_minor_locator(yminorLocator)
+        ax.xaxis.set_minor_locator(xminorLocator)
+        # ax.yaxis.set_major_locator(ymajorLocator)
+        ax.xaxis.set_major_locator(xmajorLocator)
+
+        if i == 5:
+            ax.yaxis.set_minor_locator(MultipleLocator(1))
+            ax.yaxis.set_major_locator(MultipleLocator(1))
+        # 修改刻度属性
+        ax.tick_params(which='major', axis='x', labelrotation=20)
+        ax.tick_params(which='major', axis='y')
+        
+        # 添加axis label
+        if i % 3 == 0:
+            ax.set_ylabel('人数/交易笔数', labelpad=10 if i == 0 else 15)
+        if i == 4:
+            ax.set_xlabel('月份', labelpad=12)
+        # 添加网格
+        ax.grid(which='major', ls='--', alpha=.8, lw=.8)
+        # 添加图例
+        if ax == axes[1, 1]:
+            ax.legend(fontsize=12, loc='upper left', title="", bbox_to_anchor=(0.04, -0.55), ncol=2, fancybox=True)
+        # 添加文本信息(标题)
+        ax.set_title(f'({i+1}) ' + label, pad=10, loc='center')
+    # plt.savefig(path + '1.pdf')
+    # plt.savefig('res/robustness_comparison_classes_new.png')
+    # plt.savefig('res/malware-adv-big.png')
+    plt.show()
+
+plot_6_subfigure()
+
+
+exit()
+
+filepath = "D:/Workspace/workspace_vscode_python/ExcelLib/数据/"
+filename = "2023.8-2024.6合并数据_split.csv"
 # filename = '120109194004221029-总.csv'
-filename2 = '异地门诊合并_1-2_split.csv'
+filename2 = "异地门诊合并_1-2_split.csv"
 # filename2 = '120109194004221029-门诊.csv'
 
 s_t = time.time()
@@ -13,34 +139,21 @@ df = pd.read_csv(filepath + filename)
 df2 = pd.read_csv(filepath + filename2)
 print("读取数据耗时:", time.time() - s_t, "秒")
 
-df = df.rename(columns={'身份证号':'身份证号码'})
+df = df.rename(columns={"身份证号": "身份证号码"})
 
 # 根据日期，身份证号码，金额求两个dataframe的交集
-df3 = pd.merge(df, df2, how='inner', on=['日期', '身份证号码', '总金额'])
+df3 = pd.merge(df, df2, how="inner", on=["日期", "身份证号码", "总金额"])
 
 cols = sorted([_ for _ in df3.columns])
 print(cols)
 
-cols = ['   ', 'BY', 'B超', 'CT', 'HIS传入个人账户使用标识', 'HIS接口版本号', 'HIS认证版本号', 
-        'Unnamed: 0_x', 'Unnamed: 0_y', '三方对账状态', '上传批号', '上传时间', '上传标志', 
-        '个人支付金额_x', '个人支付金额_y', '个人账户支付金额_x', '个人账户支付金额_y', 
-        '中成药_x', '中成药_y', '中草药_x', '中草药_y', '交易方式', '交易流水号', '交易状态', 
-        '交易确认时间', '入库日期', '入库标志入临时库', '其他', '其他项目', '化验_x', '化验_y', 
-        '医事服务费', '医保号', '医保未结算原因', '医疗类别_x', '医疗类别_y', '医院配置个人账户使用弹窗',
-        '单位补充医疗保险原公疗支付金额', '卡号', '原交易时间', '原交易流水号', '参保地', '参保省',
-        '发票号', '司法鉴定', '国家平台结算时间', '基金抵扣标识', '基金支付金额_x', '基金支付金额_y',
-        '大病支付', '姓名_x', '姓名_y', '审核标志入正式库', '家庭医生签约标识', '就诊介质类型',
-        '就诊科室', '常规检查', '年龄', '床位', '序号', '心理测试', '性别_x', '性别_y', '总金额',
-        '慢病类型', '手术', '手术费', '护理', '挂号费', '接口途径', '接诊医师', '放射', '救助支付',
-        '救助类别', '日期', '时间_x', '时间_y', '明细错误', '材料', '材料费', '核磁', 
-        '检查', '正畸费', '治疗', '治疗费', '申报批号', '病人选择个人账户使用标识', 
-        '累计待遇业务处理编号', '膳食', '血费', '补传状态', '西药_x', '西药_y', '证件类型', 
-        '诊察费', '诊断', '账户扣减标识', '身份证号码', '输氧费', '输血费', '退役医疗', 
-        '退役医疗费', '退费标识', '退费红冲标识', '重收交易对应的原交易流水号', '重收交易对应的退费交易流水号', 
-        '锁定标识', '镶牙费', '险种类别', '麻醉']
 df3 = df3.reindex(columns=cols)
 
-df3.to_csv(filepath + '2023.8-2024.6合并数据_异地门诊合并_merge.csv', index=False, encoding='utf-8')
+df3.to_csv(
+    filepath + "2023.8-2024.6合并数据_异地门诊合并_merge.csv",
+    index=False,
+    encoding="utf-8",
+)
 """
 合并结果：82715条数据
 原总数据：179208条数据
@@ -48,43 +161,43 @@ df3.to_csv(filepath + '2023.8-2024.6合并数据_异地门诊合并_merge.csv', 
 """
 exit()
 
-filepath = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
-filename = '2023.8-2024.6合并数据_new.csv'
-filename2 = '异地门诊合并_1-2.csv'
+filepath = "D:/Workspace/workspace_vscode_python/ExcelLib/数据/"
+filename = "2023.8-2024.6合并数据_new.csv"
+filename2 = "异地门诊合并_1-2.csv"
 
 s_t = time.time()
 df = pd.read_csv(filepath + filename)
 df2 = pd.read_csv(filepath + filename2)
 print("读取数据耗时:", time.time() - s_t, "秒")
 
-df[['日期', '时间']] = df['交易日期'].str.split(' ', expand=True)
-df2[['日期', '时间']] = df2['收费日期'].str.split(' ', expand=True)
+df[["日期", "时间"]] = df["交易日期"].str.split(" ", expand=True)
+df2[["日期", "时间"]] = df2["收费日期"].str.split(" ", expand=True)
 
-df['日期'] = pd.to_datetime(df['日期'])
-df2['日期'] = pd.to_datetime(df2['日期'])
+df["日期"] = pd.to_datetime(df["日期"])
+df2["日期"] = pd.to_datetime(df2["日期"])
 
-df.drop(['交易日期'], axis=1, inplace=True)
-df2.drop(['收费日期'], axis=1, inplace=True)
+df.drop(["交易日期"], axis=1, inplace=True)
+df2.drop(["收费日期"], axis=1, inplace=True)
 
-df.to_csv(filepath + '2023.8-2024.6合并数据_split.csv', index=False, encoding='utf-8')
-df2.to_csv(filepath + '异地门诊合并_1-2_split.csv', index=False, encoding='utf-8')
+df.to_csv(filepath + "2023.8-2024.6合并数据_split.csv", index=False, encoding="utf-8")
+df2.to_csv(filepath + "异地门诊合并_1-2_split.csv", index=False, encoding="utf-8")
 
 exit()
 
-filepath = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
-filename = '2023.8-2024.6合并数据_new.csv'
-filename2 = '异地门诊合并_1-2.csv'
+filepath = "D:/Workspace/workspace_vscode_python/ExcelLib/数据/"
+filename = "2023.8-2024.6合并数据_new.csv"
+filename2 = "异地门诊合并_1-2.csv"
 
 s_t = time.time()
 df = pd.read_csv(filepath + filename)
 df2 = pd.read_csv(filepath + filename2)
 print("读取数据耗时:", time.time() - s_t, "秒")
 
-df = df[df['身份证号']=='120109194004221029']
-df.to_csv(filepath + '120109194004221029-总.csv', encoding='gbk')
+df = df[df["身份证号"] == "120109194004221029"]
+df.to_csv(filepath + "120109194004221029-总.csv", encoding="gbk")
 
-df2 = df2[df2['身份证号码']=='120109194004221029']
-df2.to_csv(filepath + '120109194004221029-门诊.csv', encoding='gbk')
+df2 = df2[df2["身份证号码"] == "120109194004221029"]
+df2.to_csv(filepath + "120109194004221029-门诊.csv", encoding="gbk")
 
 exit()
 
@@ -94,32 +207,39 @@ df2 = pd.read_csv(filepath + filename2)
 df3 = pd.read_csv(filepath + filename3)
 print("读取数据耗时:", time.time() - s_t, "秒")
 
-print('2023.8-2024.6合并数据_new.csv: \n', df['医疗类别'].value_counts())
-print('\n\n异地门诊合并_1-2.csv: \n', df2['医疗类别'].value_counts())
-print('\n\n异地挂号合并_1-2.csv: \n', df3['医疗类别'].value_counts())
+print("2023.8-2024.6合并数据_new.csv: \n", df["医疗类别"].value_counts())
+print("\n\n异地门诊合并_1-2.csv: \n", df2["医疗类别"].value_counts())
+print("\n\n异地挂号合并_1-2.csv: \n", df3["医疗类别"].value_counts())
 
 exit()
 
 s_t = time.time()
-filepath = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/' \
-           '2023.8-2024.6合并数据.csv'
+filepath = (
+    "D:/Workspace/workspace_vscode_python/ExcelLib/数据/" "2023.8-2024.6合并数据.csv"
+)
 
 df = pd.read_csv(filepath)
 print("读取数据耗时:", time.time() - s_t, "秒")
 
-df = df.drop(df[df['险种类别'] == '合计'].index)
+df = df.drop(df[df["险种类别"] == "合计"].index)
 
-df.to_csv(filepath[:-4] + '_new.csv')
+df.to_csv(filepath[:-4] + "_new.csv")
 
 exit()
 
 s_t = time.time()
-filepath = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/' \
-           '异地门诊患者结算数据20230801-20240630新.xls'
+filepath = (
+    "D:/Workspace/workspace_vscode_python/ExcelLib/数据/"
+    "异地门诊患者结算数据20230801-20240630新.xls"
+)
 
-sheet_names = ['门诊20230801-20240131', '门诊20240201-0630', 
-               '挂号20230801-1231', '挂号20240101-0430', 
-               '挂号20240501-0630']
+sheet_names = [
+    "门诊20230801-20240131",
+    "门诊20240201-0630",
+    "挂号20230801-1231",
+    "挂号20240101-0430",
+    "挂号20240501-0630",
+]
 
 # df = pd.read_excel(filepath, dtype=str, sheet_name=None)
 df1 = pd.read_excel(filepath, dtype=str, sheet_name=sheet_names[2])
@@ -132,7 +252,7 @@ print("读取数据耗时:", time.time() - s_t, "秒")
 df = pd.concat([df1, df2, df3], ignore_index=True)
 print("合并完成，正在保存...")
 
-df.to_csv(filepath[:-4] + '_3-5.csv')
+df.to_csv(filepath[:-4] + "_3-5.csv")
 
 exit()
 
@@ -143,11 +263,11 @@ exit()
 #         '原交易流水号': [np.nan, np.nan, np.nan, 'two', 'three', np.nan, np.nan],
 #     })
 
-nums = df[df['原交易流水号'].notnull()]['原交易流水号'].tolist()
+nums = df[df["原交易流水号"].notnull()]["原交易流水号"].tolist()
 # print(df.tail())
 print("共删除", len(nums) * 2, "条数据")
-df = df.drop(df[df['交易流水号'].isin(nums)].index)
-df = df.drop(df[df['原交易流水号'].notnull()].index)
+df = df.drop(df[df["交易流水号"].isin(nums)].index)
+df = df.drop(df[df["原交易流水号"].notnull()].index)
 
 # 一行
 # df = df.drop(df[(df['交易流水号'].isin(df[df['原交易流水号'].notnull()]['原交易流水号'].tolist())) /
@@ -156,4 +276,7 @@ df = df.drop(df[df['原交易流水号'].notnull()].index)
 # print(df.tail())
 
 # 保存数据，gbk是中文编码
-df.to_csv(r"D:/Workspace/workspace_vscode_python/ExcelLib/数据/2023.8-2024.6合并数据_new.csv", encoding='gbk')
+df.to_csv(
+    r"D:/Workspace/workspace_vscode_python/ExcelLib/数据/2023.8-2024.6合并数据_new.csv",
+    encoding="gbk",
+)

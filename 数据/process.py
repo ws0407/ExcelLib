@@ -6,24 +6,29 @@ import matplotlib.pyplot as plt
 import time
 import openpyxl
 
-path = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
+path = '数据/data/'
 
 def get_data():
     """数据格式：年龄段+人数
     {
-        '10~19': int,
-        '20~29': int,
+        '10~19': [1,2,3,4,5,6],
+        '20~29': [1,2,3,4,5,6],
         ...,
-        '90~99': int
+        '90~99': [1,2,3,4,5,6]
     }
     """
     wb = openpyxl.load_workbook(path + 'results.xlsx')
     sheet1 = wb.active
-    res = {f'{i}0~{i}9': 0 for i in range(1, 10)}
+    diseases = ['恶性肿瘤门诊治疗', '糖尿病', '高血压', '透析', '肾移植抗排异治疗', '肝移植抗排异治疗'] 
+    res = {f'{i}0~{i}9': {_: 0 for _ in diseases} for i in range(1, 10)}
     # print(res)
-    for row in range(77, 149):
-        age = int(sheet1.cell(row, 1).value)
-        res[f'{age // 10}0~{age // 10}9'] += int(sheet1.cell(row, 2).value)
+    age = 0
+    for row in range(153, 366):
+        try:
+            age = int(sheet1.cell(row, 1).value)
+        except:
+            continue
+        res[f'{age // 10}0~{age // 10}9'][sheet1.cell(row, 2).value] += int(sheet1.cell(row, 3).value)
     return res
 
 def plot_1_subfigure():
@@ -31,7 +36,7 @@ def plot_1_subfigure():
               '#f5587b', '#D87575', '#F05837', '#8AE1FC', '#0AAFF1', '#4ECDC4', '#C3a3E5']
     plt.figure(figsize=(8, 6))
 
-    plt.rcParams['font.family'] = 'Cambria'
+    plt.rcParams['font.family'] = ['Times New Roman', 'SimSun']
     plt.rcParams['font.size'] = 12
     plt.rcParams['axes.linewidth'] = 1
     # 设置图例标题大小
@@ -39,12 +44,15 @@ def plot_1_subfigure():
 
     data = get_data()
     # print(data)
-    for key, i in zip(data.keys(), range(len(data.keys()))):
-        p = plt.bar(key, data[key], color=colors[i])
-        plt.bar_label(p, label_type='edge')
+    cumulative_values = [0] * len(list(data.keys()))
+    for i, disease in enumerate(data['10~19'].keys()):
+        values = [_[disease] for _ in data.values()]
+        plt.bar(data.keys(), values, bottom=cumulative_values, color=colors[i], label=disease)
+        cumulative_values = [cumulative_values[i] + _ for i, _ in enumerate(values)]
     plt.title("各年龄段balabala")
     plt.xlabel("年龄段", fontsize=18)
     plt.ylabel("例次", fontsize=18)
+    plt.legend()
     plt.tick_params(axis='x', labelrotation=45)
     plt.gcf().subplots_adjust(top=0.95, bottom=0.23)
     plt.show()

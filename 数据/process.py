@@ -9,6 +9,59 @@ import openpyxl
 path = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
 
 def get_data():
+    """数据格式：年龄段+人数
+    {
+        '10~19': int,
+        '20~29': int,
+        ...,
+        '90~99': int
+    }
+    """
+    wb = openpyxl.load_workbook(path + 'results.xlsx')
+    sheet1 = wb.active
+    res = {f'{i}0~{i}9': 0 for i in range(1, 10)}
+    # print(res)
+    for row in range(77, 149):
+        age = int(sheet1.cell(row, 1).value)
+        res[f'{age // 10}0~{age // 10}9'] += int(sheet1.cell(row, 2).value)
+    return res
+
+def plot_1_subfigure():
+    colors = ['brown', '#003399', '#C2DFFA', '#B6F0C9', '#FCD271' ,'#FF7A5A',
+              '#f5587b', '#D87575', '#F05837', '#8AE1FC', '#0AAFF1', '#4ECDC4', '#C3a3E5']
+    plt.figure(figsize=(8, 6))
+
+    plt.rcParams['font.family'] = 'Cambria'
+    plt.rcParams['font.size'] = 12
+    plt.rcParams['axes.linewidth'] = 1
+    # 设置图例标题大小
+    plt.rcParams['legend.title_fontsize'] = 28
+
+    data = get_data()
+    # print(data)
+    for key, i in zip(data.keys(), range(len(data.keys()))):
+        p = plt.bar(key, data[key], color=colors[i])
+        plt.bar_label(p, label_type='edge')
+    plt.title("各年龄段balabala")
+    plt.xlabel("年龄段", fontsize=18)
+    plt.ylabel("例次", fontsize=18)
+    plt.tick_params(axis='x', labelrotation=45)
+    plt.gcf().subplots_adjust(top=0.95, bottom=0.23)
+    plt.show()
+
+exit()
+
+from matplotlib.ticker import AutoMinorLocator
+from matplotlib.pyplot import MultipleLocator
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+import openpyxl
+
+path = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
+
+def get_data():
     wb = openpyxl.load_workbook(path + 'results.xlsx')
     sheet1 = wb.active
     people = {}

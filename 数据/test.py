@@ -1,12 +1,24 @@
+import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+import time
+import openpyxl
 
-# 扩展示例DataFrame
-df1 = pd.DataFrame({'key1': ['K0', 'K0', 'K1', 'K2'], 'key2': ['K0', 'K0', 'K1', 'K2'], 'value': [0, 1, 2, 3]})
-df2 = pd.DataFrame({'key1': ['K0', 'K1', 'K1'], 'key2': ['K0', 'K0', 'K0'], 'value2': [4, 5, 6]})
-print(df1)
-print(df2)
-# 使用how='outer'进行外连接
-result = pd.merge(df1, df2, how='inner', on=['key1', 'key2'])
 
-print(result)
+x = np.arange(0, 3 * np.pi, 0.5)
+print(x)
+y = np.sin(x)
 
+plt.plot(x, y, color='green', linestyle='--', linewidth=1, marker='o', markerfacecolor='blue', markersize=10)
+plt.show()
+
+x = [1,2,3,4,5]
+y = [z * z for z in x]  # y : [1, 4, 9, 16, 25]
+
+
+res = {}
+res['name'] = 'ws'
+res['Array'] = [1,23,4]
+res['dict'] = {'a':1,'b':2}
+
+print(res)

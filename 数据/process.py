@@ -1,3 +1,93 @@
+from matplotlib.ticker import AutoMinorLocator
+from matplotlib.pyplot import MultipleLocator
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+import openpyxl
+
+path = 'D:/Workspace/workspace_vscode_python/ExcelLib/数据/'
+
+def get_data():
+    wb = openpyxl.load_workbook(path + 'results.xlsx')
+    sheet1 = wb.active
+    people = {}
+    trade = {}
+    for i in range(6):
+        trade[sheet1.cell(i * 2 + 6, 2).value] = [int(sheet1.cell(i * 2 + 6, col).value) for col in range(3, 14)]
+        people[sheet1.cell(i * 2 + 6, 2).value] = [int(sheet1.cell(i * 2 + 7, col).value) for col in range(3, 14)]
+    return {'交易笔数': trade, '人数': people}
+
+
+def plot_2_subfigure():
+    res = get_data()
+    # print(data)
+    titles = ['']
+    tick_titles = list(res.keys())
+    diseases = list(res[tick_titles[0]].keys())
+    keys_plot = diseases
+    colors = ["#C72228", '#F98F34', '#0C4E9B', "#F5867F", "#FFBC80", "#6B98C4"]
+    markers = ['o', 'x', 'v', '^', '.', 's']
+    linestyles = ['-', ':', '-.', '--', '-', '-']
+
+    x = ['2023-08', '2023-09', '2023-10', '2023-11', '2023-12', '2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06']
+
+    plt.rcParams['axes.linewidth'] = 1
+    # 设置图例标题大小
+    plt.rcParams['legend.title_fontsize'] = 10
+    plt.rcParams["font.family"] = ["Times New Roman", "SimSun"]  # 使用支持的黑体中文字体
+    # 全局字体
+    plt.rcParams['font.size'] = 13
+    # 标题的字体大小
+    plt.rcParams['axes.titlesize'] = 13
+    plt.rcParams["axes.unicode_minus"] = False  # 用来正常显示负数  "-"
+    # 刻度字体大小
+    plt.rcParams['xtick.labelsize'] = 10
+    plt.rcParams['ytick.labelsize'] = 10
+    # plt.rcParams['font.sans-serif'] = ['Fangsong']  # 用来正常显示中文标签
+
+    # yticks(np.linspace(0.2, 1.0, 5, endpoint=True))
+
+    fig, axes = plt.subplots(2, 2, figsize=(36, 36), dpi=120)
+    for i in range(2):
+        plt.delaxes(axes[1, i])
+
+    plt.subplots_adjust(wspace=None, hspace=None)
+
+    for i, disease in zip(range(6), diseases):
+        for j in range(2):
+            ax = axes[0, j]
+            ax.plot(x, res[tick_titles[j]][disease], color=colors[i], label=disease, 
+                         marker=markers[i], linestyle=linestyles[i])
+            ax.plot([0], [0], color='w')
+            ax.xaxis.set_minor_locator(MultipleLocator(1))
+            ax.xaxis.set_major_locator(MultipleLocator(2))
+            # 修改刻度属性
+            ax.tick_params(which='major', axis='x', labelrotation=20, direction='in')
+            ax.tick_params(which='minor', axis='x', direction='in')
+            ax.tick_params(which='major', axis='y', direction='in')
+            ax.set_xlabel(f'月份', labelpad=12)
+            ax.set_title(f'({j+1}) {tick_titles[j]}', pad=10, loc='center') 
+            # 添加网格
+            ax.grid(which='major', ls='--', alpha=.8, lw=.8)
+                      
+            # 添加axis label
+            ax.set_ylabel(tick_titles[j], labelpad=10)
+        # 添加文本信息(标题)
+        # axes[0, 0].set_title(' '*32 + '2023年8月-2024年6月某院门诊异地慢特病结算趋势图，（1）交易笔数；（2）人数。', pad=10, loc='left') 
+        # 添加图例
+        axes[0, 0].legend(fontsize=12, loc='upper left', title="", bbox_to_anchor=(0.37, -0.3), ncol=3, fancybox=True)
+        
+    # plt.savefig(path + '1.pdf')
+    # plt.savefig('res/robustness_comparison_classes_new.png')
+    # plt.savefig('res/malware-adv-big.png')
+    plt.show()
+
+plot_2_subfigure()
+
+
+exit()
+
 
 from matplotlib.ticker import AutoMinorLocator
 from matplotlib.pyplot import MultipleLocator
@@ -14,11 +104,85 @@ def get_data():
     wb = openpyxl.load_workbook(path + 'results.xlsx')
     sheet1 = wb.active
     sample = {}
-    sample['人数'] = [int(sheet1.cell(4, col).value) for col in range(3, 14)]
-    sample['交易笔数'] = [int(sheet1.cell(5, col).value) for col in range(3, 14)]
+    sample['交易笔数'] = [int(sheet1.cell(4, col).value) for col in range(3, 14)]
+    sample['人数'] = [int(sheet1.cell(5, col).value) for col in range(3, 14)]
     res['总'] = sample
     return res
 
+def plot_total_figure():
+    res = get_data()
+    # print(data)
+
+    labels = list(res.keys())
+    keys = list(res[labels[0]].keys())
+    keys_plot = keys
+    colors = ['#DE582B', '#1868B2']
+    markers = ['o', '^']
+    linestyles = ['-', '-.']
+
+    x = ['2023-08', '2023-09', '2023-10', '2023-11', '2023-12', '2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06']
+
+    plt.rcParams['axes.linewidth'] = 1
+    # 设置图例标题大小
+    plt.rcParams['legend.title_fontsize'] = 10
+    plt.rcParams["font.family"] = ["Times New Roman", "SimSun"]  # 使用支持的黑体中文字体
+    # 全局字体
+    plt.rcParams['font.size'] = 13
+    # 标题的字体大小
+    plt.rcParams['axes.titlesize'] = 13
+    plt.rcParams["axes.unicode_minus"] = False  # 用来正常显示负数  "-"
+    # 刻度字体大小
+    plt.rcParams['xtick.labelsize'] = 10
+    plt.rcParams['ytick.labelsize'] = 10
+    # plt.rcParams['font.sans-serif'] = ['Fangsong']  # 用来正常显示中文标签
+
+    # yticks(np.linspace(0.2, 1.0, 5, endpoint=True))
+
+    fig, axes = plt.subplots(2, 2, figsize=(48, 48), dpi=110)
+    # plt.delaxes(axes[2, 1])
+
+    plt.subplots_adjust(wspace=None, hspace=0.6)
+
+    for i, label in zip(range(1), labels):
+        ax = axes[int(i / 3), int(i % 3)]
+        for p, c, m, ls, k_p in zip(keys, colors, markers, linestyles, keys_plot):
+            ax.plot(x[:len(res[label][p])], res[label][p][:], color=c, label=k_p, marker=m, linestyle=ls)
+        ax.plot([0], [0], color='w')
+        # 修改次刻度
+        # yminorLocator = MultipleLocator(1)  # 将此y轴次刻度标签设置为0.1的倍数
+        xminorLocator = MultipleLocator(1)
+        xmajorLocator = MultipleLocator(2)
+        # ymajorLocator = MultipleLocator(100)
+        # ax.yaxis.set_minor_locator(yminorLocator)
+        ax.xaxis.set_minor_locator(xminorLocator)
+        # ax.yaxis.set_major_locator(ymajorLocator)
+        ax.xaxis.set_major_locator(xmajorLocator)
+
+        if i == 5:
+            ax.yaxis.set_minor_locator(MultipleLocator(1))
+            ax.yaxis.set_major_locator(MultipleLocator(1))
+        # 修改刻度属性
+        ax.tick_params(which='major', axis='x', labelrotation=20)
+        ax.tick_params(which='major', axis='y')
+        
+        # 添加axis label
+        if i % 3 == 0:
+            ax.set_ylabel('人数/交易笔数', labelpad=10 if i == 0 else 15)
+        if i == 0:
+            ax.set_xlabel('月份', labelpad=12)
+        # 添加网格
+        ax.grid(which='major', ls='--', alpha=.8, lw=.8)
+        # 添加图例
+        if ax == axes[0, 0]:
+            ax.legend(fontsize=12, loc='upper left', title="", bbox_to_anchor=(0.25, -0.3), ncol=2, fancybox=True)
+        # 添加文本信息(标题)
+        ax.set_title('2023年8月-2024年6月某院门诊异地慢特病\n结算交易笔数和人数趋势图', pad=10, loc='center')
+    # plt.savefig(path + '1.pdf')
+    # plt.savefig('res/robustness_comparison_classes_new.png')
+    # plt.savefig('res/malware-adv-big.png')
+    plt.show()
+
+plot_total_figure()
 
 
 
@@ -103,8 +267,8 @@ def plot_6_subfigure():
             ax.yaxis.set_minor_locator(MultipleLocator(1))
             ax.yaxis.set_major_locator(MultipleLocator(1))
         # 修改刻度属性
-        ax.tick_params(which='major', axis='x', labelrotation=20)
-        ax.tick_params(which='major', axis='y')
+        ax.tick_params(which='major', axis='x', labelrotation=20, direction='in', top='on', right="on")
+        ax.tick_params(which='major', axis='y', direction='in', top='on', right="on")
         
         # 添加axis label
         if i % 3 == 0:
